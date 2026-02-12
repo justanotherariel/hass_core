@@ -5,5 +5,5 @@
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/ws66i",
   "iot_class": "local_polling",
-  "requirements": ["pyws66i==1.1"]
+  "requirements": ["pyws66i==1.1", "standard-telnetlib==3.13.0"]
 }

@@ -3819,7 +3819,7 @@ class OptionsFlowManager(
             await flow.async_setup_preview(self.hass)
 
 
-class OptionsFlow(ConfigEntryBaseFlow):
+class OptionsFlow[_ConfigEntryT: ConfigEntry = ConfigEntry](ConfigEntryBaseFlow):
     """Base class for config options flows."""
 
     handler: str
@@ -3858,7 +3858,7 @@ class OptionsFlow(ConfigEntryBaseFlow):
         return self.handler
 
     @property
-    def config_entry(self) -> ConfigEntry:
+    def config_entry(self) -> _ConfigEntryT:
         """Return the config entry linked to the current options flow.
 
         Please note that this is not available inside `__init__` method, and
@@ -3866,10 +3866,12 @@ class OptionsFlow(ConfigEntryBaseFlow):
         """
         if self.hass is None:
             raise ValueError("The config entry is not available during initialisation")
-        return self.hass.config_entries.async_get_known_entry(self._config_entry_id)
+        return self.hass.config_entries.async_get_known_entry(self._config_entry_id)  # type: ignore[return-value]
 
 
-class OptionsFlowWithConfigEntry(OptionsFlow):
+class OptionsFlowWithConfigEntry[_ConfigEntryT: ConfigEntry = ConfigEntry](
+    OptionsFlow[_ConfigEntryT]
+):
     """Base class for options flows with config entry and options.
 
     This class is being phased out, and should not be referenced in new code.
@@ -3893,7 +3895,9 @@ class OptionsFlowWithConfigEntry(OptionsFlow):
         return self._options
 
 
-class OptionsFlowWithReload(OptionsFlow):
+class OptionsFlowWithReload[_ConfigEntryT: ConfigEntry = ConfigEntry](
+    OptionsFlow[_ConfigEntryT]
+):
     """Automatic reloading class for config options flows.
 
     Triggers an automatic reload of the config entry when the flow ends with

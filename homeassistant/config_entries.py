@@ -3586,7 +3586,7 @@ class ConfigSubentryFlowManager(
         return result
 
 
-class ConfigSubentryFlow(
+class ConfigSubentryFlow[_ConfigEntryT: ConfigEntry = ConfigEntry](
     data_entry_flow.FlowHandler[
         SubentryFlowContext, SubentryFlowResult, tuple[str, str]
     ]
@@ -3624,7 +3624,7 @@ class ConfigSubentryFlow(
     @callback
     def _async_update(
         self,
-        entry: ConfigEntry,
+        entry: _ConfigEntryT,
         subentry: ConfigSubentry,
         *,
         unique_id: str | None | UndefinedType = UNDEFINED,
@@ -3652,7 +3652,7 @@ class ConfigSubentryFlow(
     @callback
     def async_update_and_abort(
         self,
-        entry: ConfigEntry,
+        entry: _ConfigEntryT,
         subentry: ConfigSubentry,
         *,
         unique_id: str | None | UndefinedType = UNDEFINED,
@@ -3681,7 +3681,7 @@ class ConfigSubentryFlow(
     @callback
     def async_update_reload_and_abort(
         self,
-        entry: ConfigEntry,
+        entry: _ConfigEntryT,
         subentry: ConfigSubentry,
         *,
         unique_id: str | None | UndefinedType = UNDEFINED,
@@ -3725,9 +3725,9 @@ class ConfigSubentryFlow(
         return self.handler[1]
 
     @callback
-    def _get_entry(self) -> ConfigEntry:
+    def _get_entry(self) -> _ConfigEntryT:
         """Return the config entry linked to the current context."""
-        return self.hass.config_entries.async_get_known_entry(self._entry_id)
+        return self.hass.config_entries.async_get_known_entry(self._entry_id)  # type: ignore[return-value]
 
     @property
     def _reconfigure_subentry_id(self) -> str:

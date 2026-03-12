@@ -94,6 +94,7 @@ from .trace import (
     trace_stack_push,
     trace_stack_top,
 )
+from .trigger import EntityMatchSpec
 from .typing import ConfigType, TemplateVarsType
 
 ASYNC_FROM_CONFIG_FORMAT = "async_{}_from_config"
@@ -335,7 +336,7 @@ ENTITY_STATE_CONDITION_SCHEMA_ANY_ALL = vol.Schema(
 class EntityConditionBase(Condition):
     """Base class for entity conditions."""
 
-    _domain: str
+    _match_specs: list[EntityMatchSpec]
     _schema: vol.Schema = ENTITY_STATE_CONDITION_SCHEMA_ANY_ALL
 
     @override
@@ -355,13 +356,41 @@ class EntityConditionBase(Condition):
         self._target_selection = TargetSelection(config.target)
         self._behavior = config.options[ATTR_BEHAVIOR]
 
+    def get_match_spec_for_entity(self, entity_id: str) -> EntityMatchSpec | None:
+        """Find the matching spec for an entity."""
+        domain = split_entity_id(entity_id)[0]
+        for spec in self._match_specs:
+            if spec.domain == domain:
+                return spec
+        return None
+
     def entity_filter(self, entities: set[str]) -> set[str]:
-        """Filter entities of this domain."""
-        return {
-            entity_id
-            for entity_id in entities
-            if split_entity_id(entity_id)[0] == self._domain
-        }
+        """Filter entities matching any of the match specs."""
+        from .entity import get_supported_features  # noqa: PLC0415
+        from .trigger import get_device_class_or_undefined  # noqa: PLC0415
+
+        result: set[str] = set()
+        for entity_id in entities:
+            domain = split_entity_id(entity_id)[0]
+            for spec in self._match_specs:
+                if spec.domain != domain:
+                    continue
+                if spec.device_class is not None:
+                    if (
+                        get_device_class_or_undefined(self._hass, entity_id)
+                        != spec.device_class
+                    ):
+                        continue
+                if spec.required_features is not None:
+                    try:
+                        supported = get_supported_features(self._hass, entity_id)
+                    except HomeAssistantError:
+                        continue
+                    if not supported & spec.required_features:
+                        continue
+                result.add(entity_id)
+                break
+        return result
 
     @abc.abstractmethod
     def is_valid_state(self, entity_state: State) -> bool:
@@ -428,7 +457,7 @@ def make_entity_state_condition(
     class CustomCondition(EntityStateConditionBase):
         """Condition for entity state."""
 
-        _domain = domain
+        _match_specs = [EntityMatchSpec(domain=domain)]
         _states = states_set
 
     return CustomCondition
@@ -458,7 +487,7 @@ def make_entity_state_attribute_condition(
     class CustomCondition(EntityStateAttributeConditionBase):
         """Condition for entity attribute."""
 
-        _domain = domain
+        _match_specs = [EntityMatchSpec(domain=domain)]
         _attribute = attribute
         _attribute_states = attribute_states_set
 

@@ -1,9 +1,8 @@
 """Provides triggers for alarm control panels."""
 
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.entity import get_supported_features
 from homeassistant.helpers.trigger import (
+    EntityMatchSpec,
     EntityTargetStateTriggerBase,
     Trigger,
     make_entity_target_state_trigger,
@@ -13,40 +12,18 @@ from homeassistant.helpers.trigger import (
 from .const import DOMAIN, AlarmControlPanelEntityFeature, AlarmControlPanelState
 
 
-def supports_feature(hass: HomeAssistant, entity_id: str, features: int) -> bool:
-    """Test if an entity supports the specified features."""
-    try:
-        return bool(get_supported_features(hass, entity_id) & features)
-    except HomeAssistantError:
-        return False
-
-
-class EntityStateTriggerRequiredFeatures(EntityTargetStateTriggerBase):
-    """Trigger for entity state changes."""
-
-    _required_features: int
-
-    def entity_filter(self, entities: set[str]) -> set[str]:
-        """Filter entities of this domain."""
-        entities = super().entity_filter(entities)
-        return {
-            entity_id
-            for entity_id in entities
-            if supports_feature(self._hass, entity_id, self._required_features)
-        }
-
-
 def make_entity_state_trigger_required_features(
     domain: str, to_state: str, required_features: int
 ) -> type[EntityTargetStateTriggerBase]:
     """Create an entity state trigger class with required feature filtering."""
 
-    class CustomTrigger(EntityStateTriggerRequiredFeatures):
+    class CustomTrigger(EntityTargetStateTriggerBase):
         """Trigger for entity state changes."""
 
-        _domains = {domain}
+        _match_specs = [
+            EntityMatchSpec(domain=domain, required_features=required_features)
+        ]
         _to_states = {to_state}
-        _required_features = required_features
 
     return CustomTrigger
 

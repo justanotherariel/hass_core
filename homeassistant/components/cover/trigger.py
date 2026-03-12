@@ -1,12 +1,8 @@
 """Provides triggers for covers."""
 
 from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
-from homeassistant.core import HomeAssistant, State, split_entity_id
-from homeassistant.helpers.trigger import (
-    EntityTriggerBase,
-    Trigger,
-    get_device_class_or_undefined,
-)
+from homeassistant.core import HomeAssistant, State
+from homeassistant.helpers.trigger import EntityMatchSpec, EntityTriggerBase, Trigger
 
 from .const import ATTR_IS_CLOSED, DOMAIN, CoverDeviceClass
 
@@ -16,23 +12,13 @@ class CoverTriggerBase(EntityTriggerBase):
 
     _binary_sensor_target_state: str
     _cover_is_closed_target_value: bool
-    _device_classes: dict[str, str]
-
-    def entity_filter(self, entities: set[str]) -> set[str]:
-        """Filter entities by cover device class."""
-        entities = super().entity_filter(entities)
-        return {
-            entity_id
-            for entity_id in entities
-            if get_device_class_or_undefined(self._hass, entity_id)
-            == self._device_classes[split_entity_id(entity_id)[0]]
-        }
 
     def is_valid_state(self, state: State) -> bool:
         """Check if the state matches the target cover state."""
-        if split_entity_id(state.entity_id)[0] == DOMAIN:
+        spec = self.get_match_spec_for_entity(state.entity_id)
+        if spec is not None and spec.value_source is not None:
             return (
-                state.attributes.get(ATTR_IS_CLOSED)
+                state.attributes.get(spec.value_source)
                 == self._cover_is_closed_target_value
             )
         return state.state == self._binary_sensor_target_state
@@ -41,10 +27,11 @@ class CoverTriggerBase(EntityTriggerBase):
         """Check if the transition is valid for a cover state change."""
         if from_state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             return False
-        if split_entity_id(from_state.entity_id)[0] == DOMAIN:
-            if (from_is_closed := from_state.attributes.get(ATTR_IS_CLOSED)) is None:
+        spec = self.get_match_spec_for_entity(from_state.entity_id)
+        if spec is not None and spec.value_source is not None:
+            if (from_is_closed := from_state.attributes.get(spec.value_source)) is None:
                 return False
-            return from_is_closed != to_state.attributes.get(ATTR_IS_CLOSED)  # type: ignore[no-any-return]
+            return from_is_closed != to_state.attributes.get(spec.value_source)  # type: ignore[no-any-return]
         return from_state.state != to_state.state
 
 
@@ -58,8 +45,14 @@ def make_cover_opened_trigger(
 
         _binary_sensor_target_state = STATE_ON
         _cover_is_closed_target_value = False
-        _domains = domains or {DOMAIN}
-        _device_classes = device_classes
+        _match_specs = [
+            EntityMatchSpec(
+                domain=domain,
+                device_class=dc,
+                value_source=ATTR_IS_CLOSED if domain == DOMAIN else None,
+            )
+            for domain, dc in device_classes.items()
+        ]
 
     return CoverOpenedTrigger
 
@@ -74,8 +67,14 @@ def make_cover_closed_trigger(
 
         _binary_sensor_target_state = STATE_OFF
         _cover_is_closed_target_value = True
-        _domains = domains or {DOMAIN}
-        _device_classes = device_classes
+        _match_specs = [
+            EntityMatchSpec(
+                domain=domain,
+                device_class=dc,
+                value_source=ATTR_IS_CLOSED if domain == DOMAIN else None,
+            )
+            for domain, dc in device_classes.items()
+        ]
 
     return CoverClosedTrigger
 

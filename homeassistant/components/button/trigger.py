@@ -4,6 +4,7 @@ from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, State
 from homeassistant.helpers.trigger import (
     ENTITY_STATE_TRIGGER_SCHEMA,
+    EntityMatchSpec,
     EntityTriggerBase,
     Trigger,
 )
@@ -14,7 +15,7 @@ from . import DOMAIN
 class ButtonPressedTrigger(EntityTriggerBase):
     """Trigger for button entity presses."""
 
-    _domains = {DOMAIN}
+    _match_specs = [EntityMatchSpec(domain=DOMAIN)]
     _schema = ENTITY_STATE_TRIGGER_SCHEMA
 
     def is_valid_transition(self, from_state: State, to_state: State) -> bool:

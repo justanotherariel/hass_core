@@ -1,51 +1,28 @@
 """Provides conditions for alarm control panels."""
 
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.condition import (
     Condition,
     EntityStateConditionBase,
     make_entity_state_condition,
 )
-from homeassistant.helpers.entity import get_supported_features
+from homeassistant.helpers.trigger import EntityMatchSpec
 
 from .const import DOMAIN, AlarmControlPanelEntityFeature, AlarmControlPanelState
 
 
-def supports_feature(hass: HomeAssistant, entity_id: str, features: int) -> bool:
-    """Test if an entity supports the specified features."""
-    try:
-        return bool(get_supported_features(hass, entity_id) & features)
-    except HomeAssistantError:
-        return False
-
-
-class EntityStateRequiredFeaturesCondition(EntityStateConditionBase):
-    """State condition."""
-
-    _required_features: int
-
-    def entity_filter(self, entities: set[str]) -> set[str]:
-        """Filter entities of this domain with the required features."""
-        entities = super().entity_filter(entities)
-        return {
-            entity_id
-            for entity_id in entities
-            if supports_feature(self._hass, entity_id, self._required_features)
-        }
-
-
 def make_entity_state_required_features_condition(
     domain: str, to_state: str, required_features: int
-) -> type[EntityStateRequiredFeaturesCondition]:
+) -> type[EntityStateConditionBase]:
     """Create an entity state condition class with required feature filtering."""
 
-    class CustomCondition(EntityStateRequiredFeaturesCondition):
+    class CustomCondition(EntityStateConditionBase):
         """Condition for entity state changes."""
 
-        _domain = domain
+        _match_specs = [
+            EntityMatchSpec(domain=domain, required_features=required_features)
+        ]
         _states = {to_state}
-        _required_features = required_features
 
     return CustomCondition
 

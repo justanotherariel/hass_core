@@ -1,4 +1,4 @@
-"""The random component."""
+"""The random integration."""
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant

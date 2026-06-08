@@ -1,4 +1,4 @@
-"""DataUpdateCoordinator for the Homeassistant Analytics integration."""
+"""DataUpdateCoordinator for the Home Assistant Analytics integration."""
 
 from dataclasses import dataclass
 from datetime import timedelta
@@ -39,7 +39,7 @@ class AnalyticsData:
 
 
 class HomeassistantAnalyticsDataUpdateCoordinator(DataUpdateCoordinator[AnalyticsData]):
-    """A Homeassistant Analytics Data Update Coordinator."""
+    """A Home Assistant Analytics Data Update Coordinator."""
 
     config_entry: AnalyticsInsightsConfigEntry
 
@@ -49,7 +49,7 @@ class HomeassistantAnalyticsDataUpdateCoordinator(DataUpdateCoordinator[Analytic
         config_entry: AnalyticsInsightsConfigEntry,
         client: HomeassistantAnalyticsClient,
     ) -> None:
-        """Initialize the Homeassistant Analytics data coordinator."""
+        """Initialize the Home Assistant Analytics data coordinator."""
         super().__init__(
             hass,
             LOGGER,
@@ -75,7 +75,7 @@ class HomeassistantAnalyticsDataUpdateCoordinator(DataUpdateCoordinator[Analytic
             custom_data = await self._client.get_custom_integrations()
         except HomeassistantAnalyticsConnectionError as err:
             raise UpdateFailed(
-                "Error communicating with Homeassistant Analytics"
+                "Error communicating with Home Assistant Analytics"
             ) from err
         except HomeassistantAnalyticsNotModifiedError:
             return self.data

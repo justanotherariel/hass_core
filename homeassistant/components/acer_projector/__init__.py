@@ -1,1 +1,1 @@
-"""The acer_projector component."""
+"""The acer_projector integration."""

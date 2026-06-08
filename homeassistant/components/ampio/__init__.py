@@ -1,1 +1,1 @@
-"""The Ampio component."""
+"""The Ampio integration."""

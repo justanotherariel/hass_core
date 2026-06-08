@@ -1,4 +1,4 @@
-"""Sensor for Home Assistant analytics."""
+"""Sensor for Home Assistant Analytics."""
 
 from collections.abc import Callable
 from dataclasses import dataclass

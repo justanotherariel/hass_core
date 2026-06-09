@@ -1,4 +1,4 @@
-"""Config flow for Homeassistant Analytics integration."""
+"""Config flow for Home Assistant Analytics integration."""
 
 from typing import Any
 
@@ -39,7 +39,7 @@ INTEGRATION_TYPES_WITHOUT_ANALYTICS = (
 
 
 class HomeassistantAnalyticsConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Homeassistant Analytics."""
+    """Handle a config flow for Home Assistant Analytics."""
 
     VERSION = 2
 
@@ -134,7 +134,7 @@ class HomeassistantAnalyticsConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class HomeassistantAnalyticsOptionsFlowHandler(OptionsFlowWithReload):
-    """Handle Homeassistant Analytics options."""
+    """Handle Home Assistant Analytics options."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None

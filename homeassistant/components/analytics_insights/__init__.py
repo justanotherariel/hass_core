@@ -1,4 +1,4 @@
-"""The Homeassistant Analytics integration."""
+"""The Home Assistant Analytics integration."""
 
 from dataclasses import dataclass
 
@@ -33,7 +33,7 @@ class AnalyticsInsightsData:
 async def async_setup_entry(
     hass: HomeAssistant, entry: AnalyticsInsightsConfigEntry
 ) -> bool:
-    """Set up Homeassistant Analytics from a config entry."""
+    """Set up Home Assistant Analytics from a config entry."""
     client = HomeassistantAnalyticsClient(session=async_get_clientsession(hass))
 
     try:

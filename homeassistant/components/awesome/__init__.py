@@ -1,0 +1,1 @@
+"""The Awesome Device integration."""

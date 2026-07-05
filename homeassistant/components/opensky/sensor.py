@@ -1,4 +1,4 @@
-"""Sensor for the Open Sky Network."""
+"""Sensor for the OpenSky Network."""
 
 from typing import override
 

@@ -9,6 +9,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from .coordinator import NYTGamesConfigEntry, NYTGamesCoordinator
 
 PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
     Platform.SENSOR,
 ]
 

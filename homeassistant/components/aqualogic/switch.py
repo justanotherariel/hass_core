@@ -105,3 +105,5 @@ class AquaLogicSwitch(SwitchEntity):
         self.async_on_remove(
             async_dispatcher_connect(self.hass, UPDATE_TOPIC, self.async_write_ha_state)
         )
+
+# Bot end-to-end test marker

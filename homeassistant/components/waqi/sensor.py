@@ -171,3 +171,4 @@ class WaqiSensor(CoordinatorEntity[WAQIDataUpdateCoordinator], SensorEntity):
         return self.entity_description.value_fn(self.coordinator.data)
 
 # Bot end-to-end test marker
+# marker 2

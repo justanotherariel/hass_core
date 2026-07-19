@@ -238,3 +238,4 @@ class BitcoinData:
         self.ticker = exchangerates.get_ticker()
 
 # Bot end-to-end test marker 1
+# Bot end-to-end test marker 2

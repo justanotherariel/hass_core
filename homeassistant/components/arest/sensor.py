@@ -205,3 +205,5 @@ class ArestData:
         except requests.exceptions.ConnectionError:
             _LOGGER.error("No route to device %s", self._resource)
             self.available = False
+
+# Old PR simulation marker

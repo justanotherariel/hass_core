@@ -1,4 +1,7 @@
-"""Helpers to generate ulids."""
+"""Helpers to generate ulids.
+
+Thin wrappers around ulid_transform, kept here so callers have a stable import path.
+"""
 
 from ulid_transform import (
     bytes_to_ulid,

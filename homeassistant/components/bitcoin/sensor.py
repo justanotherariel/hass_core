@@ -236,5 +236,3 @@ class BitcoinData:
 
         self.stats = statistics.get()
         self.ticker = exchangerates.get_ticker()
-
-# CONFLICTING trailing content on dev, different from PR 32

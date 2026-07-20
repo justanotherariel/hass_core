@@ -242,3 +242,4 @@ class BitcoinData:
 # Bot end-to-end test marker 3
 # Bot end-to-end test marker 4
 # marker 5
+# marker 6

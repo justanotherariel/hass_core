@@ -1,4 +1,7 @@
-"""The lastfm component."""
+"""The lastfm component.
+
+Integrates the Last.fm scrobbling service as sensor entities.
+"""
 
 from homeassistant.core import HomeAssistant
 

@@ -236,3 +236,4 @@ class BitcoinData:
 
         self.stats = statistics.get()
         self.ticker = exchangerates.get_ticker()
+# backfill probe

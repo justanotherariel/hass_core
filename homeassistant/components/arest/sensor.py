@@ -205,3 +205,4 @@ class ArestData:
         except requests.exceptions.ConnectionError:
             _LOGGER.error("No route to device %s", self._resource)
             self.available = False
+# bot-test: undefined-state probe (bot-test-undef-labeled)

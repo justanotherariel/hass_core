@@ -105,3 +105,4 @@ class AquaLogicSwitch(SwitchEntity):
         self.async_on_remove(
             async_dispatcher_connect(self.hass, UPDATE_TOPIC, self.async_write_ha_state)
         )
+# bot-test: undefined-state probe (bot-test-undef-sync)

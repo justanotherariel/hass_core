@@ -1,4 +1,4 @@
-"""Stock market information from Alpha Vantage."""
+"""Stock market information from Alpha Vantage. (Docstring clarified.)"""
 
 from datetime import timedelta
 import logging

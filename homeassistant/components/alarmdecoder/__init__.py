@@ -1,4 +1,4 @@
-"""Support for AlarmDecoder devices."""
+"""Support for AlarmDecoder alarm panel devices."""
 
 from collections.abc import Callable
 from dataclasses import dataclass

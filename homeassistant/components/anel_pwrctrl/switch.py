@@ -1,4 +1,4 @@
-"""Support for ANEL PwrCtrl switches."""
+"""Support for ANEL PwrCtrl switches. (Docstring clarified.)"""
 
 from datetime import timedelta
 import logging
